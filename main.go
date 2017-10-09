@@ -29,11 +29,22 @@ func main() {
 }
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
-	_, err := ioutil.ReadAll(r.Body)
+	body, err := ioutil.ReadAll(r.Body)
+
 	if err != nil {
-		panic("Failed to read Response Body!")
+		http.Error(w, "Bad Request!", http.StatusBadRequest)
+		return
 	}
-	response := helloWorldResponse{Message: "Hello World"}
+
+	var request helloWorldRequest
+	err = json.Unmarshal(body, &request)
+
+	if err != nil {
+		http.Error(w, "Bad Request!", http.StatusBadRequest)
+		return
+	}
+
+	response := helloWorldResponse{Message: "Hello World " + request.Name}
 	encoder := json.NewEncoder(w)
 	encoder.Encode(response)
 }
