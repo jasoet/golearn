@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"io/ioutil"
 )
 
 type helloWorldResponse struct {
@@ -12,6 +13,10 @@ type helloWorldResponse struct {
 	Author  string `json:"-"`
 	Date    string `json:",omitempty"`
 	Id      int    `json:"id, string"`
+}
+
+type helloWorldRequest struct {
+	Name string `json:"name"`
 }
 
 func main() {
@@ -24,7 +29,11 @@ func main() {
 }
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
-	response := helloWorldResponse{Message: "HelloWorld"}
+	_, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		panic("Failed to read Response Body!")
+	}
+	response := helloWorldResponse{Message: "Hello World"}
 	encoder := json.NewEncoder(w)
-	encoder.Encode(&response)
+	encoder.Encode(response)
 }
