@@ -25,11 +25,6 @@ func main() {
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
 	response := helloWorldResponse{Message: "HelloWorld"}
-	data, err := json.MarshalIndent(response, "", "  ")
-
-	if err != nil {
-		panic("Oops")
-	}
-
-	fmt.Fprint(w, string(data))
+	encoder := json.NewEncoder(w)
+	encoder.Encode(&response)
 }
