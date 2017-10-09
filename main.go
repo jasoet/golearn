@@ -1,10 +1,18 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 )
+
+type helloWorldResponse struct {
+	Message string `json:"message"`
+	Author  string `json:"-"`
+	Date    string `json:",omitempty"`
+	Id      int    `json:"id, string"`
+}
 
 func main() {
 	port := 8989
@@ -16,5 +24,12 @@ func main() {
 }
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello World\n")
+	response := helloWorldResponse{Message: "HelloWorld"}
+	data, err := json.MarshalIndent(response, "", "  ")
+
+	if err != nil {
+		panic("Oops")
+	}
+
+	fmt.Fprint(w, string(data))
 }
